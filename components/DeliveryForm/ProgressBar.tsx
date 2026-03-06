@@ -1,6 +1,6 @@
 "use client";
 
-import { ProgressBarProps } from "@/types/ui/ProgressBar";
+import { ProgressBarProps } from "@/types/ui/progressBar";
 
 export default function ProgressBar({ step, totalSteps }: ProgressBarProps) {
   const widthPercent = (step / totalSteps) * 100;
