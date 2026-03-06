@@ -6,7 +6,9 @@ export function initOrders() {
 
   const existing = localStorage.getItem("orders");
 
-  if (existing) return;
+  if (!existing) {
+    localStorage.setItem("orders", JSON.stringify([]));
+  }
 
   const mockOrders: Order[] = [
     {
