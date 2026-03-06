@@ -1,0 +1,198 @@
+```yaml
+openapi: 3.0.3
+info:
+  title: Parcel Delivery API
+  description: API for parcel delivery order form
+  version: 1.0.0
+
+servers:
+  - url: https://api.example.com
+
+paths:
+
+  /orders:
+    get:
+      summary: Get list of orders
+      parameters:
+        - in: query
+          name: search
+          schema:
+            type: string
+          description: Search by recipient name or destination city
+
+        - in: query
+          name: cargoType
+          schema:
+            $ref: '#/components/schemas/CargoType'
+          description: Filter by cargo type
+
+      responses:
+        '200':
+          description: List of orders
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/OrderCard'
+
+    post:
+      summary: Create new order
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateOrderRequest'
+
+      responses:
+        '201':
+          description: Order created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Order'
+
+  /orders/{id}:
+    get:
+      summary: Get order details
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: string
+
+      responses:
+        '200':
+          description: Order details
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Order'
+
+        '404':
+          description: Order not found
+
+    delete:
+      summary: Delete order
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: string
+
+      responses:
+        '204':
+          description: Order deleted
+
+components:
+
+  schemas:
+
+    CargoType:
+      type: string
+      enum:
+        - documents
+        - fragile
+        - regular
+
+    OrderStatus:
+      type: string
+      enum:
+        - created
+        - cancelled
+
+    Sender:
+      type: object
+      required:
+        - name
+        - phone
+        - city
+      properties:
+        name:
+          type: string
+          minLength: 2
+        phone:
+          type: string
+        city:
+          type: string
+
+    Recipient:
+      type: object
+      required:
+        - name
+        - city
+      properties:
+        name:
+          type: string
+        city:
+          type: string
+
+    Cargo:
+      type: object
+      required:
+        - type
+        - weight
+      properties:
+        type:
+          $ref: '#/components/schemas/CargoType'
+        weight:
+          type: number
+          minimum: 0.1
+          maximum: 30
+
+    CreateOrderRequest:
+      type: object
+      required:
+        - sender
+        - recipient
+        - cargo
+        - agreement
+      properties:
+        sender:
+          $ref: '#/components/schemas/Sender'
+        recipient:
+          $ref: '#/components/schemas/Recipient'
+        cargo:
+          $ref: '#/components/schemas/Cargo'
+        agreement:
+          type: boolean
+
+    Order:
+      type: object
+      properties:
+        id:
+          type: string
+        createdAt:
+          type: string
+          format: date-time
+        status:
+          $ref: '#/components/schemas/OrderStatus'
+        sender:
+          $ref: '#/components/schemas/Sender'
+        recipient:
+          $ref: '#/components/schemas/Recipient'
+        cargo:
+          $ref: '#/components/schemas/Cargo'
+
+    OrderCard:
+      type: object
+      properties:
+        id:
+          type: string
+        fromCity:
+          type: string
+        toCity:
+          type: string
+        senderName:
+          type: string
+        cargoType:
+          $ref: '#/components/schemas/CargoType'
+        createdAt:
+          type: string
+          format: date-time
+        status:
+          $ref: '#/components/schemas/OrderStatus'
+```
