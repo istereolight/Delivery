@@ -36,6 +36,7 @@ export default function Page() {
   const router = useRouter();
 
   const handleSubmit = () => {
+    if (typeof window === "undefined") return;
     const order: Order = {
       id: uuidv4(),
       senderName: senderData.name,
